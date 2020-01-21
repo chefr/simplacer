@@ -76,7 +76,7 @@ public class DefaultMineral implements Mineral {
      */
     @Override
     public String toString() {
-        return getClass().getSimpleName() + "[name=" + name + ", density=" +
-                String.format("%.2f", density) + "]";
+        return String.format("%s[name=%s, density=%.2f]",
+                getClass().getSimpleName(), name, density);
     }
 }

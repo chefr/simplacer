@@ -64,10 +64,10 @@ public class DefaultMineralTest {
     @Test
     public void testToString() {
         Mineral zircon = new DefaultMineral("Zircon", 4.6);
-        Assert.assertEquals("DefaultMineral[name=Zircon, density=" +
-                String.format("%.2f", 4.6) + "]", zircon.toString());
+        Assert.assertEquals(String.format("DefaultMineral[name=Zircon, " +
+                "density=%.2f]", 4.6), zircon.toString());
         Mineral quartz = new DefaultMineral("Quartz", 2.6);
-        Assert.assertEquals("DefaultMineral[name=Quartz, density=" +
-                String.format("%.2f", 2.6) + "]", quartz.toString());
+        Assert.assertEquals(String.format("DefaultMineral[name=Quartz, " +
+                "density=%.2f]", 2.6), quartz.toString());
     }
 }
