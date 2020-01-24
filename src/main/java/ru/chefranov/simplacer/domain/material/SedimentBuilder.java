@@ -34,13 +34,13 @@ public interface SedimentBuilder {
 
     /**
      * Adds the Grain percentage.
-     * @param grain Grain
+     * @param index Index of the Grain in the Grain Repository
      * @param percentage Percentage, %, > 0.0
      * @return This
      * @throws IOException if the percentage of the same Grain already have been
      * added
      */
-    SedimentBuilder addGrainPercentage(Grain grain, double percentage)
+    SedimentBuilder addGrainPercentage(int index, double percentage)
             throws IOException;
 
     /**

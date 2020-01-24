@@ -1,8 +1,7 @@
 package ru.chefranov.simplacer.domain.material;
 
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.Arrays;
 
 /**
  * Default Sediment.
@@ -11,32 +10,33 @@ import java.util.Map;
  */
 public class DefaultSediment implements Sediment {
 
-    private final Map<Grain, Double> composition;
+    private double[] composition;
 
     /**
      * @param composition Composition
      */
-    private DefaultSediment(Map<Grain, Double> composition) {
+    private DefaultSediment(double[] composition) {
         this.composition = composition;
     }
 
     /**
      * Returns the Grain percentage, %.
-     * @param grain Grain
+     * @param index Index of the Grain in the Grain Repository
      * @return Grain percentage, >= 0.0 && <= 100.0
      */
     @Override
-    public double getGrainPercentage(Grain grain) {
-        return composition.getOrDefault(grain, 0.0);
+    public double getGrainPercentage(int index) {
+        return composition[index];
     }
 
     /**
-     * Returns the composition as (grain -> percentage) map.
+     * Returns the array [grain index in the Grain Repository] ->
+     * percentage of this Grain.
      * @return Composition
      */
     @Override
-    public Map<Grain, Double> getComposition() {
-        return new HashMap<>(composition);
+    public double[] getComposition() {
+        return composition.clone();
     }
 
     /**
@@ -45,7 +45,8 @@ public class DefaultSediment implements Sediment {
      */
     @Override
     public String toString() {
-        return String.format("%s[composition=%s]", getClass().getSimpleName(), composition);
+        return String.format("%s[composition=%s]", getClass().getSimpleName(),
+                Arrays.toString(composition));
     }
 
     /**
@@ -54,9 +55,16 @@ public class DefaultSediment implements Sediment {
      */
     public static class Builder implements SedimentBuilder {
 
-        private final Map<Grain, Double> composition = new HashMap<>();
+        private double[] composition;
 
         private double admissibleDeviation = -1.0;
+
+        /**
+         * @param numberOfComponents Number of Grains in Grain Repo
+         */
+        public Builder(int numberOfComponents) {
+            composition = new double[numberOfComponents];
+        }
 
         /**
          * Sets the admissible deviation of the sum of grain percentages
@@ -89,45 +97,41 @@ public class DefaultSediment implements Sediment {
          * from 100.0(%) more than the admissible deviation
          */
         @Override
-        public Sediment getSediment() throws IOException {
-            if (composition.isEmpty()) {
+        public DefaultSediment getSediment() throws IOException {
+            double sum = Arrays.stream(composition).reduce(0.0, Double::sum);
+            if(sum == 0.0) {
                 return null;
             }
-            double sum = composition.values().stream().reduce(0.0, Double::sum);
-            if (admissibleDeviation >= 0.0 &&
+            if(admissibleDeviation >= 0.0 &&
                     (sum < (100.0 - admissibleDeviation) ||
                             sum > (100.0 + admissibleDeviation))) {
                 throw new IOException("ERROR_SEDIMENT_BUILDER_COMPOSITION_" +
                         "INCORRECT");
             }
-            Map<Grain, Double> sedimentComposition = new HashMap<>(composition);
-            if (sum != 100.0) {
+            double[] sedimentComposition = composition.clone();
+            if(sum != 100.0) {
                 double k = 100.0 / sum;
-                for (Map.Entry<Grain, Double> entry :
-                        sedimentComposition.entrySet()) {
-                    sedimentComposition.put(entry.getKey(),
-                            entry.getValue() * k);
-                }
+                sedimentComposition = Arrays.stream(sedimentComposition).
+                        map(val -> val * k).toArray();
             }
             return new DefaultSediment(sedimentComposition);
         }
 
         /**
          * Adds the Grain percentage.
-         * @param grain Grain
+         * @param index Index of the Grain in the Grain Repository
          * @param percentage Percentage, %, > 0.0
          * @return This
          * @throws IOException if the percentage of the same Grain already have
          * been added
          */
         @Override
-        public SedimentBuilder addGrainPercentage(Grain grain,
-                                                  double percentage)
+        public SedimentBuilder addGrainPercentage(int index, double percentage)
                 throws IOException {
-            if(composition.containsKey(grain)) {
+            if(composition[index] != 0.0) {
                 throw new IOException("ERROR_SEDIMENT_BUILDER_GRAIN_PERCENTAGE_COLLISION");
             }
-            composition.put(grain, percentage);
+            composition[index] = percentage;
             return this;
         }
 
@@ -135,7 +139,7 @@ public class DefaultSediment implements Sediment {
          * Clears the composition.
          */
         public void clearComposition() {
-            composition.clear();
+            Arrays.fill(composition, 0.0);
         }
 
         /**
@@ -145,7 +149,8 @@ public class DefaultSediment implements Sediment {
         @Override
         public String toString() {
             return String.format("%s[admissibleDeviation=%.1f, composition=%s]",
-                    getClass().getSimpleName(), admissibleDeviation, composition);
+                    getClass().getSimpleName(), admissibleDeviation,
+                    Arrays.toString(composition));
         }
     }
 }

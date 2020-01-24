@@ -4,8 +4,6 @@ import org.junit.Assert;
 import org.junit.Test;
 
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * Tests DefaultSedimentBuilder class.
@@ -18,7 +16,7 @@ public class DefaultSedimentBuilderTest {
      */
     @Test
     public void testSetGetAdmissibleDeviation() {
-        SedimentBuilder builder = new DefaultSediment.Builder();
+        SedimentBuilder builder = new DefaultSediment.Builder(3);
         Assert.assertEquals(-1.0, builder.getAdmissibleDeviation(), 0.0);
         double prevDev = builder.setAdmissibleDeviation(10.0);
         Assert.assertEquals(-1.0, prevDev, 0.0);
@@ -33,46 +31,34 @@ public class DefaultSedimentBuilderTest {
      */
     @Test
     public void testAddGrainPercentageGetSediment() {
-        Mineral zircon = new DefaultMineral("Zircon", 4.6);
-        Mineral quartz = new DefaultMineral("Quartz", 2.6);
-        Grain zir02 = new DefaultGrain("Zir02", zircon, 0.02);
-        Grain zir01 = new DefaultGrain("Zir01", zircon, 0.01);
-        Grain qz025 = new DefaultGrain("Qz025", quartz, 0.025);
-        Grain qz01 = new DefaultGrain("Qz01", quartz, 0.01);
-        SedimentBuilder builder = new DefaultSediment.Builder();
+        SedimentBuilder builder = new DefaultSediment.Builder(4);
         try {
             Assert.assertNull(builder.getSediment());
         } catch(IOException ex) {
             Assert.fail();
         }
         try {
-            builder.addGrainPercentage(zir02, 15.0).
-                    addGrainPercentage(zir01, 10.0).
-                    addGrainPercentage(qz025, 25.0).
-                    addGrainPercentage(qz01, 50.0);
-            Map<Grain, Double> composition = new HashMap<>();
-            composition.put(zir02, 15.0);
-            composition.put(zir01, 10.0);
-            composition.put(qz025, 25.0);
-            composition.put(qz01, 50.0);
-            Assert.assertEquals(composition, builder.getSediment().
-                    getComposition());
+            builder.addGrainPercentage(0, 15.0).
+                    addGrainPercentage(1, 10.0).
+                    addGrainPercentage(2, 25.0).
+                    addGrainPercentage(3, 50.0);
+            double[] composition = new double[]{15.0, 10.0, 25.0, 50.0};
+            Assert.assertArrayEquals(composition, builder.getSediment().
+                    getComposition(), 0.0);
         } catch(IOException ex) {
             Assert.fail();
         }
 
         builder.clearComposition();
         try {
-            builder.addGrainPercentage(zir02, 15.0).
-                    addGrainPercentage(qz025, 25.0);
-            Map<Grain, Double> composition = new HashMap<>();
-            composition.put(zir02, 37.5);
-            composition.put(qz025, 62.5);
-            Assert.assertEquals(composition, builder.getSediment().
-                    getComposition());
+            builder.addGrainPercentage(0, 15.0).
+                    addGrainPercentage(2, 25.0);
+            double[] composition = new double[]{37.5, 0.0, 62.5, 0.0};
+            Assert.assertArrayEquals(composition, builder.getSediment().
+                    getComposition(), 0.0);
             builder.setAdmissibleDeviation(60.0);
-            Assert.assertEquals(composition, builder.getSediment().
-                    getComposition());
+            Assert.assertArrayEquals(composition, builder.getSediment().
+                    getComposition(), 0.0);
             try {
                 builder.setAdmissibleDeviation(59.9);
                 builder.getSediment();
@@ -82,8 +68,8 @@ public class DefaultSedimentBuilderTest {
                         "INCORRECT", ex.getMessage());
             }
             builder.setAdmissibleDeviation(-10.0);
-            Assert.assertEquals(composition, builder.getSediment().
-                    getComposition());
+            Assert.assertArrayEquals(composition, builder.getSediment().
+                    getComposition(), 0.0);
             try {
                 builder.setAdmissibleDeviation(0.0);
                 builder.getSediment();
@@ -99,21 +85,18 @@ public class DefaultSedimentBuilderTest {
         builder.clearComposition();
         builder.setAdmissibleDeviation(-0.1);
         try {
-            builder.addGrainPercentage(zir02, 25.0).
-                    addGrainPercentage(qz025, 65.0).
-                    addGrainPercentage(qz01, 35.0);
-            Map<Grain, Double> composition = new HashMap<>();
-            composition.put(zir02, 20.0);
-            composition.put(qz025, 52.0);
-            composition.put(qz01, 28.0);
-            Assert.assertEquals(composition, builder.getSediment().
-                    getComposition());
+            builder.addGrainPercentage(0, 25.0).
+                    addGrainPercentage(2, 65.0).
+                    addGrainPercentage(3, 35.0);
+            double[] composition = new double[]{20.0, 0.0, 52.0, 28.0};
+            Assert.assertArrayEquals(composition, builder.getSediment().
+                    getComposition(), 0.0);
             builder.setAdmissibleDeviation(30.0);
-            Assert.assertEquals(composition, builder.getSediment().
-                    getComposition());
+            Assert.assertArrayEquals(composition, builder.getSediment().
+                    getComposition(), 0.0);
             builder.setAdmissibleDeviation(25.0);
-            Assert.assertEquals(composition, builder.getSediment().
-                    getComposition());
+            Assert.assertArrayEquals(composition, builder.getSediment().
+                    getComposition(), 0.0);
             try {
                 builder.setAdmissibleDeviation(24.9);
                 builder.getSediment();
@@ -128,8 +111,8 @@ public class DefaultSedimentBuilderTest {
 
         builder.clearComposition();
         try {
-            builder.addGrainPercentage(zir02, 15.0).
-                    addGrainPercentage(zir02, 25.0);
+            builder.addGrainPercentage(0, 15.0).
+                    addGrainPercentage(0, 25.0);
             Assert.fail();
         } catch(IOException ex) {
             Assert.assertEquals("ERROR_SEDIMENT_BUILDER_GRAIN_PERCENTAGE_" +
@@ -143,13 +126,10 @@ public class DefaultSedimentBuilderTest {
      */
     @Test
     public void testClearComposition() {
-        Mineral zircon = new DefaultMineral("Zircon", 4.6);
-        Grain zir02 = new DefaultGrain("Zir02", zircon, 0.02);
-        Grain zir01 = new DefaultGrain("Zir01", zircon, 0.01);
-        SedimentBuilder builder = new DefaultSediment.Builder();
+        SedimentBuilder builder = new DefaultSediment.Builder(2);
         try {
-            builder.addGrainPercentage(zir02, 25.0).
-                    addGrainPercentage(zir01, 75.0);
+            builder.addGrainPercentage(0, 25.0).
+                    addGrainPercentage(1, 75.0);
             builder.clearComposition();
             Assert.assertNull(builder.getSediment());
         } catch(IOException ex) {
