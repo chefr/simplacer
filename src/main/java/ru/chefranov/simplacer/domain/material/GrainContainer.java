@@ -1,7 +1,5 @@
 package ru.chefranov.simplacer.domain.material;
 
-import java.util.Map;
-
 /**
  * Grain Container.
  * @author Chefranov R.M.

@@ -138,6 +138,7 @@ public class DefaultSediment implements Sediment {
         /**
          * Clears the composition.
          */
+        @Override
         public void clearComposition() {
             Arrays.fill(composition, 0.0);
         }
