@@ -4,8 +4,7 @@ import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
 
-public class SimplacerTest
-{
+public class SimplacerTest {
 
     @Test
     public void shouldAnswerWithTrue() {
