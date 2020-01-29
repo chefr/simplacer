@@ -58,6 +58,7 @@ public class DefaultCut implements Cut {
     @Override
     public void addTopLayer(Layer layer) {
         layers.add(layer);
+        topHeight += layer.getThickness();
     }
 
     /**
