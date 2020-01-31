@@ -19,13 +19,34 @@ public class DefaultArea implements Area {
     /**
      * @param cuts Two-dimensional array of the cuts
      * @param defaultSediment Default sediment
-     * @param distance Distance between adjacent cuts, > 0.0
+     * @param distance Distance between adjacent cuts, m, > 0.0
      */
     public DefaultArea(Cut[][] cuts, Sediment defaultSediment,
                        double distance) {
         this.cuts = cuts;
         this.defaultSediment = defaultSediment;
         this.distance = distance;
+    }
+
+    /**
+     * Returns the Cut Data.
+     * @param index Index of the Grain in the Grain Repository
+     * @return Cut Data
+     */
+    @Override
+    public CutData[][] getCutData(int index) {
+        CutData[][] data = new CutData[cuts.length][];
+        double defSediment = defaultSediment.getGrainPercentage(index);
+        for(int i = 0; i < cuts.length; ++i) {
+            data[i] = Arrays.stream(cuts[i]).map(cut -> {
+                Sediment sediment = cut.getDefaultSediment();
+                return new DefaultCutData(cut.getTopHeight(),
+                        cut.getLayerData(index),
+                        (sediment == null)? defSediment :
+                                sediment.getGrainPercentage(index));
+            }).toArray(CutData[]::new);
+        }
+        return data;
     }
 
     /**

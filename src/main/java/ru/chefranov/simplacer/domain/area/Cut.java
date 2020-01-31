@@ -1,6 +1,7 @@
 package ru.chefranov.simplacer.domain.area;
 
 import ru.chefranov.simplacer.domain.material.Layer;
+import ru.chefranov.simplacer.domain.material.LayerData;
 import ru.chefranov.simplacer.domain.material.Sediment;
 
 /**
@@ -26,6 +27,13 @@ public interface Cut {
      * @return Sediment
      */
     Sediment getDefaultSediment();
+
+    /**
+     * Returns the Layer Data from bottom to top.
+     * @param index Index of the Grain in the Grain Repository
+     * @return Layer Data
+     */
+    LayerData[] getLayerData(int index);
 
     /**
      * Adds the Layer on top.

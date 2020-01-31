@@ -1,6 +1,8 @@
 package ru.chefranov.simplacer.domain.area;
 
+import ru.chefranov.simplacer.domain.material.DefaultLayerData;
 import ru.chefranov.simplacer.domain.material.Layer;
+import ru.chefranov.simplacer.domain.material.LayerData;
 import ru.chefranov.simplacer.domain.material.Sediment;
 
 import java.util.ArrayList;
@@ -49,6 +51,19 @@ public class DefaultCut implements Cut {
     @Override
     public Sediment getDefaultSediment() {
         return defaultSediment;
+    }
+
+    /**
+     * Returns the Layer Data from bottom to top.
+     * @param index Index of the Grain in the Grain Repository
+     * @return Layer Data
+     */
+    @Override
+    public LayerData[] getLayerData(int index) {
+        return layers.stream().
+                map(layer -> new DefaultLayerData(layer.getThickness(),
+                        layer.getGrainPercentage(index))).
+                toArray(DefaultLayerData[]::new);
     }
 
     /**
