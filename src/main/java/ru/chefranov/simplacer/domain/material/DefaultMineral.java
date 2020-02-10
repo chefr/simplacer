@@ -1,12 +1,15 @@
 package ru.chefranov.simplacer.domain.material;
 
+import java.io.Serializable;
 import java.util.Objects;
 
 /**
  * Default Mineral.
  * @author Chefranov R.M.
  */
-public class DefaultMineral implements Mineral {
+public class DefaultMineral implements Mineral, Serializable {
+
+    private static final long serialVersionUID = -5021970761545134121L;
 
     private String name;
 

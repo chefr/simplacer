@@ -36,6 +36,14 @@ public class DefaultCut implements Cut {
     }
 
     /**
+     * Sets the Layer on top without affecting top height.
+     * @param layer Layer
+     */
+    public void setLayerOnTop(Layer layer) {
+        layers.add(layer);
+    }
+
+    /**
      * Returns the cut top height, m.
      * @return Cut top height
      */

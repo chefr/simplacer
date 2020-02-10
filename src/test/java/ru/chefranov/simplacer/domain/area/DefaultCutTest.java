@@ -34,6 +34,25 @@ public class DefaultCutTest {
     }
 
     /**
+     * Tests the setLayerOnTop method.
+     */
+    @Test
+    public void testSetLayerOnTop() {
+        DefaultCut cut = new DefaultCut(100.0);
+        SedimentBuilder builder = new DefaultSediment.Builder(2);
+        Layer layer = null;
+        try {
+            builder.addGrainPercentage(0, 25.0).
+                    addGrainPercentage(1, 75.0);
+            layer = new DefaultLayer(builder.getSediment(), 2.0);
+        }  catch(IOException ex) {
+            Assert.fail();
+        }
+        cut.setLayerOnTop(layer);
+        Assert.assertEquals(100.0, cut.getTopHeight(), 0.0);
+    }
+
+    /**
      * Tests the getTopHeight method.
      */
     @Test
@@ -77,7 +96,7 @@ public class DefaultCutTest {
      * Tests the addTopLayer method.
      */
     @Test
-    public void addTopLayer() {
+    public void testAddTopLayer() {
         DefaultCut cut = new DefaultCut(100.0);
         SedimentBuilder builder = new DefaultSediment.Builder(2);
         Layer layer = null;

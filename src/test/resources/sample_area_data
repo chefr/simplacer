@@ -1,0 +1,30 @@
+#PARAMETERS
+DISTANCE 50.0
+
+#RELIEF
+1.0 1.0 1.3 1.4 1.45
+0.3 0.2 0.7 0.75 0.8
+-0.1 0.0 0.3 0.25 0.3
+-0.4 -0.3 -0.1 0.0 -0.1
+-0.7 -0.6 -0.4 -0.3 -0.4
+
+#MINERALS
+quartz 2.6
+ilmenite 4.6
+zircon 4.6
+
+#GRAINS
+quz02 quartz 0.02
+quz04 quartz 0.04
+ilm03 ilmenite 0.03
+ilm01 ilmenite 0.01
+zir02 zircon 0.02
+
+#DEFAULT_SEDIMENT
+ilm01 3 quz02 60 quz04 37
+
+#COMPOSITION
+2 3 quz02 80.0 quz04 20.0
+2 3 1.3 quz02 55.0 quz04 45.0
+2 3 0.7 ilm01 3.0 quz02 55.0 quz04 45.0
+4 1 2.1 zir02 2.0 ilm03 3.0 quz02 70.0 quz04 25.0

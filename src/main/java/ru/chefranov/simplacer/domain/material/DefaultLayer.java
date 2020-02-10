@@ -1,12 +1,15 @@
 package ru.chefranov.simplacer.domain.material;
 
+import java.io.Serializable;
 import java.util.Arrays;
 
 /**
  * Default sediment Layer
  * @author Chefranov R.M.
  */
-public class DefaultLayer implements Layer {
+public class DefaultLayer implements Layer, Serializable {
+
+    private static final long serialVersionUID = -1074147617412537777L;
 
     private double[] composition;
 

@@ -36,8 +36,8 @@ public class DefaultAreaTest {
         }
         cuts[0][0].setDefaultSediment(sediment);
         cuts[1][2].setDefaultSediment(sediment);
-        cuts[0][0].addTopLayer(new DefaultLayer(sediment, 1.5));
-        cuts[0][1].addTopLayer(new DefaultLayer(sediment, 1.0));
+        cuts[0][0].setLayerOnTop(new DefaultLayer(sediment, 1.5));
+        cuts[0][1].setLayerOnTop(new DefaultLayer(sediment, 1.0));
         builder.clearComposition();
         try {
             builder.addGrainPercentage(0, 25).
@@ -47,16 +47,16 @@ public class DefaultAreaTest {
             Assert.fail();
         }
         cuts[1][0].setDefaultSediment(sediment);
-        cuts[0][0].addTopLayer(new DefaultLayer(sediment, 0.5));
-        cuts[0][2].addTopLayer(new DefaultLayer(sediment, 2.3));
+        cuts[0][0].setLayerOnTop(new DefaultLayer(sediment, 0.5));
+        cuts[0][2].setLayerOnTop(new DefaultLayer(sediment, 2.3));
         Area area = new DefaultArea(cuts, sediment, 500.0);
         CutData[][] expected = new CutData[][]{
-                {new DefaultCutData(102.0, new LayerData[]{
+                {new DefaultCutData(100.0, new LayerData[]{
                         new DefaultLayerData(1.5, 10.0),
                         new DefaultLayerData(0.5, 25.0)}, 10.0),
-                        new DefaultCutData(96.0, new LayerData[]{
+                        new DefaultCutData(95.0, new LayerData[]{
                                 new DefaultLayerData(1.0, 10.0)}, 25.0),
-                        new DefaultCutData(110.8, new LayerData[]{
+                        new DefaultCutData(108.5, new LayerData[]{
                                 new DefaultLayerData(2.3, 25.0)}, 25.0)},
                 {new DefaultCutData(85.0, new LayerData[]{}, 25.0),
                         new DefaultCutData(90.5, new LayerData[]{}, 25.0),

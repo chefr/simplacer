@@ -1,6 +1,7 @@
 package ru.chefranov.simplacer.domain.material;
 
 import java.io.IOException;
+import java.io.Serializable;
 import java.util.Arrays;
 
 /**
@@ -8,7 +9,9 @@ import java.util.Arrays;
  * Use DefaultSediment.Builder to creates objects of this type.
  * @author Chefranov R.M.
  */
-public class DefaultSediment implements Sediment {
+public class DefaultSediment implements Sediment, Serializable {
+
+    private static final long serialVersionUID = -6182651062081594376L;
 
     private double[] composition;
 

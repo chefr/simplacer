@@ -1,12 +1,15 @@
 package ru.chefranov.simplacer.domain.material;
 
+import java.io.Serializable;
 import java.util.Objects;
 
 /**
  * Default Grain.
  * @author Chefranov R.M.
  */
-public class DefaultGrain implements Grain {
+public class DefaultGrain implements Grain, Serializable {
+
+    private static final long serialVersionUID = -7598656052139558793L;
 
     private String identifier;
 

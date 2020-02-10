@@ -17,6 +17,12 @@ public interface Cut {
     void setDefaultSediment(Sediment sediment);
 
     /**
+     * Sets the Layer on top without affecting top height.
+     * @param layer Layer
+     */
+    void setLayerOnTop(Layer layer);
+
+    /**
      * Returns the top height, m.
      * @return Top height
      */

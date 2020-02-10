@@ -17,4 +17,16 @@ public interface MaterialRepo {
      * @return Grains
      */
     Grain[] getGrains();
+
+    /**
+     * Returns the number of grains.
+     */
+    int getNumberOfGrains();
+
+    /**
+     * Returns the index of the grain specified by identifier.
+     * @param identifier Identifier
+     * @return Index or -1 if there is no grain with the specified identifier
+     */
+    int getGrainIndex(String identifier);
 }

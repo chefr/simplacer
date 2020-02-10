@@ -54,7 +54,7 @@ public class DefaultArea implements Area {
      */
     @Override
     public void next() {
-        // TODO
+        //  TODO
     }
 
     /**
