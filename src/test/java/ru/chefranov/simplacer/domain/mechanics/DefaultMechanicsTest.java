@@ -4,8 +4,6 @@ import org.junit.Assert;
 import org.junit.Test;
 import ru.chefranov.simplacer.domain.material.*;
 
-import java.io.IOException;
-
 /**
  * Test DefaultMechanics.
  * @author Chefranov R.M.
@@ -25,9 +23,7 @@ public class DefaultMechanicsTest {
                 new DefaultGrain("Qz01", quartz, 0.01)};
         MaterialRepo repo = new DefaultMaterialRepo(
                 new Mineral[]{zircon, quartz}, grains);
-        try {
-            Mechanics mechanics = new DefaultMechanics(
-                    new DefaultConstantHandler(), repo);
+        Mechanics mechanics = new DefaultMechanics(repo);
             Assert.assertEquals(16.945,
                     mechanics.calculateGrainInitialVelocity(grains[0], 0,
                             30.0,0.0), 0.01);
@@ -46,8 +42,5 @@ public class DefaultMechanicsTest {
             Assert.assertEquals(20.171,
                     mechanics.calculateGrainInitialVelocity(grains[2], 2,
                             30.0,0.0), 0.01);
-        } catch(IOException ex) {
-            Assert.fail();
-        }
     }
 }

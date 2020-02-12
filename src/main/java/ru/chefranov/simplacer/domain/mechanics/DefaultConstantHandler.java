@@ -18,10 +18,7 @@ public class DefaultConstantHandler implements ConstantHandler {
 
     private HashMap<String, Double> customizedConstants;
 
-    /**
-     * @throws IOException if an I/O error occurs
-     */
-    public DefaultConstantHandler() throws IOException {
+    public DefaultConstantHandler() {
         try(InputStream is = getClass().
                 getResourceAsStream("resources/constants")) {  // TODO
             Properties constants = new Properties();
@@ -29,6 +26,8 @@ public class DefaultConstantHandler implements ConstantHandler {
             constants.forEach((key, value) ->
                 defaultConstants.put(key.toString(),
                         Double.parseDouble(value.toString())));
+        } catch(IOException ex) {
+            throw new IllegalStateException(ex);
         }
     }
 

@@ -16,7 +16,7 @@ public class DefaultMaterialRepoTest {
     public void getMinerals() {
         MaterialRepo repo = new DefaultMaterialRepo(new Mineral[]{
                 new DefaultMineral("Zircon", 4.6),
-                new DefaultMineral("Quartz", 2.6)}, null);
+                new DefaultMineral("Quartz", 2.6)}, new Grain[]{});
         Assert.assertArrayEquals(new Mineral[]{
                 new DefaultMineral("Zircon", 4.6),
                 new DefaultMineral("Quartz", 2.6)}, repo.getMinerals());

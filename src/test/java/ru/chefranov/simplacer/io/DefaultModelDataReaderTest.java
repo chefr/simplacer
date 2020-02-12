@@ -22,6 +22,7 @@ public class DefaultModelDataReaderTest {
         try {
             Model model = reader.readData(Paths.get(
                     "src/test/resources/sample_area_data"));
+            System.out.println(model);
         } catch(IOException ex) {
             Assert.fail();
         }

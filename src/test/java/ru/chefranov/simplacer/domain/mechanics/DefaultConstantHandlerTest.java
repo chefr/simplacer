@@ -20,7 +20,7 @@ public class DefaultConstantHandlerTest {
             DefaultConstantHandler constants = new DefaultConstantHandler();
             Assert.assertEquals(constants.getConstant("GRAVITY"),980.665,
                     0.001);
-        } catch(IOException ex) {
+        } catch(RuntimeException ex) {
             Assert.fail();
         }
     }

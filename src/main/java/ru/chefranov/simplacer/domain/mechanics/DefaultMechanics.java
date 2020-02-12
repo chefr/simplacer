@@ -1,5 +1,6 @@
 package ru.chefranov.simplacer.domain.mechanics;
 
+import ru.chefranov.simplacer.Services;
 import ru.chefranov.simplacer.domain.material.Grain;
 import ru.chefranov.simplacer.domain.material.MaterialRepo;
 
@@ -12,16 +13,12 @@ import java.util.Arrays;
  */
 public class DefaultMechanics implements Mechanics {
 
-    private ConstantHandler constants;
-
     private double[] nonerodingVelocities;
 
     /**
-     * @param constants Constant Handler
      * @param repo Material Repository
      */
-    public DefaultMechanics(ConstantHandler constants, MaterialRepo repo) {
-        this.constants = constants;
+    public DefaultMechanics(MaterialRepo repo) {
         nonerodingVelocities = Arrays.stream(repo.getGrains()).
                 mapToDouble(this::getGrainNonerodingVelocity).toArray();
     }
@@ -40,6 +37,7 @@ public class DefaultMechanics implements Mechanics {
     public double calculateGrainInitialVelocity(Grain grain, int index,
                                                 double flowVelocity,
                                                 double angle) {
+        ConstantHandler constants = Services.getConstantHandler();
         double FS = constants.getConstant("STATIC_RES_START_MOTION_COEF_X");
         double FA = constants.getConstant("PART_WEIGHT_INCR_COEF");
         double angCoef = Math.cos(angle) - Math.sin(angle) / FS * FA;
@@ -57,6 +55,7 @@ public class DefaultMechanics implements Mechanics {
      * @return Grain noneroding velocity
      */
     private double getGrainNonerodingVelocity(Grain grain) {
+        ConstantHandler constants = Services.getConstantHandler();
         double WD = constants.getConstant("WATER_DENSITY");
         double rho = (grain.getMineral().getDensity() - WD) / WD;
         double NU = constants.getConstant("WATER_VISCOSITY_COEF");

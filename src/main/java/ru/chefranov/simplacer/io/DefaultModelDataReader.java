@@ -3,10 +3,7 @@ package ru.chefranov.simplacer.io;
 import ru.chefranov.simplacer.Services;
 import ru.chefranov.simplacer.domain.DefaultModel;
 import ru.chefranov.simplacer.domain.Model;
-import ru.chefranov.simplacer.domain.area.Area;
-import ru.chefranov.simplacer.domain.area.Cut;
-import ru.chefranov.simplacer.domain.area.DefaultArea;
-import ru.chefranov.simplacer.domain.area.DefaultCut;
+import ru.chefranov.simplacer.domain.area.*;
 import ru.chefranov.simplacer.domain.material.*;
 
 import java.io.IOException;
@@ -49,7 +46,9 @@ public class DefaultModelDataReader implements ModelDataReader {
                 dataMap.get(DataSections.DEFAULT_SEDIMENT), repo, admDeviation);
         Cut[][] cuts = readCuts(dataMap.get(DataSections.COMPOSITION), repo,
                 relief, admDeviation);
-        Area area = new DefaultArea(cuts, defSediment, parameters.get(Parameters.DISTANCE));
+        Wave[] waves = readWaves(dataMap.get(DataSections.WAVES));
+        Area area = new DefaultArea(cuts, defSediment,
+                parameters.get(Parameters.DISTANCE), waves, repo);
         return new DefaultModel(area);
     }
 
@@ -121,9 +120,8 @@ public class DefaultModelDataReader implements ModelDataReader {
             try {
                 density = Double.parseDouble(arr[1]);
             } catch(NumberFormatException ex) {
-                logger.log(Level.FINE,
-                        "ERROR_MODEL_DATA_READER_MINERAL_DENSITY_INCORRECT",
-                        arr[1]);
+                logger.log(Level.FINE, "ERROR_MODEL_DATA_READER_MINERAL_" +
+                                "DENSITY_INCORRECT", arr[1]);
                 throw new IOException(ex);
             }
             if(density <= 0.0) {
@@ -260,6 +258,53 @@ public class DefaultModelDataReader implements ModelDataReader {
         return cuts;
     }
 
+    private Wave[] readWaves(String[] dataLines) throws IOException {
+        Wave[] waves = new DefaultWave[dataLines.length];
+        for(int i = 0; i < dataLines.length; ++i) {
+            String[] arr = dataLines[i].split("\\s+");
+            if (arr.length != 3) {
+                logger.log(Level.FINE,
+                        "ERROR_MODEL_DATA_READER_WAVES_DATA_INCORRECT");
+                throw new IOException();
+            }
+            double maxVelocity;
+            try {
+                maxVelocity = Double.parseDouble(arr[0]);
+            } catch (NumberFormatException ex) {
+                logger.log(Level.FINE, "ERROR_MODEL_DATA_READER_WAVE_MAX_" +
+                        "VELOCITY_INCORRECT", arr[0]);
+                throw new IOException(ex);
+            }
+            double direction;
+            try {
+                direction = Double.parseDouble(arr[1]);
+            } catch (NumberFormatException ex) {
+                logger.log(Level.FINE, "ERROR_MODEL_DATA_READER_WAVE_" +
+                        "DIRECTION_INCORRECT", arr[1]);
+                throw new IOException(ex);
+            }
+            if (direction < 0.0 || direction >= 360.0) {
+                logger.log(Level.FINE, "ERROR_MODEL_DATA_READER_WAVE_" +
+                        "DIRECTION_INCORRECT", arr[1]);
+                throw new IOException();
+            }
+            double criticalDepth;
+            try {
+                criticalDepth = Double.parseDouble(arr[2]);
+            } catch (NumberFormatException ex) {
+                logger.log(Level.FINE, "ERROR_MODEL_DATA_READER_WAVE_" +
+                        "CRITICAL_DEPTH_INCORRECT", arr[1]);
+                throw new IOException(ex);
+            }
+            if (criticalDepth <= 0.0) {
+                logger.log(Level.FINE, "ERROR_MODEL_DATA_READER_WAVE_" +
+                        "CRITICAL_DEPTH_INCORRECT", arr[1]);
+            }
+            waves[i] = new DefaultWave(maxVelocity, direction, criticalDepth);
+        }
+        return waves;
+    }
+
     private Sediment readSediment(String[] dataArray, int offset,
                                   SedimentBuilder builder, MaterialRepo repo)
             throws IOException {
@@ -334,7 +379,8 @@ public class DefaultModelDataReader implements ModelDataReader {
     }
 
     private enum DataSections {
-        PARAMETERS, RELIEF, MINERALS, GRAINS, DEFAULT_SEDIMENT, COMPOSITION
+        PARAMETERS, RELIEF, MINERALS, GRAINS, DEFAULT_SEDIMENT, COMPOSITION,
+        WAVES
     }
 
     private enum Parameters {
