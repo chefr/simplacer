@@ -94,6 +94,11 @@ public class DefaultAreaTest {
         }
         System.out.println(area);
         area.next();
+        System.out.println(area);
+        for(int i = 0; i < 50; ++i) {
+            area.next();
+        }
+        System.out.println(area);
     }
 
     private Area getArea() throws IOException {

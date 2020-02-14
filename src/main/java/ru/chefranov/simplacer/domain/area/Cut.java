@@ -46,4 +46,14 @@ public interface Cut {
      * @param layer Layer
      */
     void addTopLayer(Layer layer);
+
+    /**
+     * Erodes the Layer with specified thickness
+     * @param thickness Thickness of the eroded layer
+     * @param areaDefaultSediment Area default sediment
+     * @param numberOfGrains Number of tte grains in repo.
+     * @return Layer
+     */
+    Layer erodeLayer(double thickness, Sediment areaDefaultSediment,
+                            int numberOfGrains);
 }

@@ -9,11 +9,19 @@ import java.util.Arrays;
  */
 public class DefaultLayer implements Layer, Serializable {
 
-    private static final long serialVersionUID = -1074147617412537777L;
+    private static final long serialVersionUID = -32705611916885430L;
 
     private double[] composition;
 
     private double thickness;
+
+    /**
+     * @param numberOfGrains Number of tte grains in repo.
+     */
+    public DefaultLayer(int numberOfGrains) {
+        composition = new double[numberOfGrains];
+        thickness = 0.0;
+    }
 
     /**
      * @param sediment Sediment
@@ -58,6 +66,31 @@ public class DefaultLayer implements Layer, Serializable {
     }
 
     /**
+     * Returns the array [grain index in the Grain Repository] ->
+     * thickness of this Grain Layer.
+     * @return Composition
+     */
+    @Override
+    public double[] getCompositionInThickness() {
+        return composition;
+    }
+
+    /**
+     * Adds the Layer to this Layer and returns this.
+     * @param other Layer
+     * @return This
+     */
+    @Override
+    public Layer add(Layer other) {
+        thickness += other.getThickness();
+        double[] otherComposition = other.getCompositionInThickness();
+        for(int i = 0; i < composition.length; ++i) {
+            composition[i] += otherComposition[i];
+        }
+        return this;
+    }
+
+    /**
      * Accumulates the Grain layer with specified thickness, m.
      * @param index Index of the Grain in the Grain Repository
      * @param thickness Thickness, > 0.0
@@ -66,6 +99,20 @@ public class DefaultLayer implements Layer, Serializable {
     public void accumulate(int index, double thickness) {
         composition[index] += thickness;
         this.thickness += thickness;
+    }
+
+    /**
+     * Erodes the share of the Layer
+     * @param share Share, > 0.0 && < 1.0
+     * @return Eroded Layer
+     */
+    @Override
+    public Layer erode(double share) {
+        Layer layer = new DefaultLayer(composition.length);
+        for(int i = 0; i < composition.length; ++i) {
+            layer.accumulate(i, erode(i, share));
+        }
+        return layer;
     }
 
     /**

@@ -1,9 +1,6 @@
 package ru.chefranov.simplacer.domain.area;
 
-import ru.chefranov.simplacer.domain.material.DefaultLayerData;
-import ru.chefranov.simplacer.domain.material.Layer;
-import ru.chefranov.simplacer.domain.material.LayerData;
-import ru.chefranov.simplacer.domain.material.Sediment;
+import ru.chefranov.simplacer.domain.material.*;
 
 import java.util.ArrayList;
 
@@ -82,6 +79,42 @@ public class DefaultCut implements Cut {
     public void addTopLayer(Layer layer) {
         layers.add(layer);
         topHeight += layer.getThickness();
+    }
+
+    /**
+     * Erodes the Layer with specified thickness
+     * @param thickness Thickness of the eroded layer
+     * @param areaDefaultSediment Area default sediment
+     * @param numberOfGrains Number of tte grains in repo.
+     * @return Layer
+     */
+    @Override
+    public Layer erodeLayer(double thickness, Sediment areaDefaultSediment,
+                            int numberOfGrains) {
+        Layer layer = new DefaultLayer(numberOfGrains);
+        topHeight -= thickness;
+        double remainingThickness = thickness;
+        while(true) {
+            if(layers.isEmpty()) {
+                return layer.add(
+                        new DefaultLayer((defaultSediment == null)?
+                        areaDefaultSediment : defaultSediment,
+                                remainingThickness));
+            }
+            double topLayerThickness =
+                    layers.get(layers.size() - 1).getThickness();
+            if(remainingThickness >= topLayerThickness) {
+                layer.add(layers.remove(layers.size() - 1));
+                if(remainingThickness == topLayerThickness) {
+                    return layer;
+                }
+                remainingThickness -= topLayerThickness;
+            } else {
+                Layer topLayer = layers.get(layers.size() - 1);
+                double k = remainingThickness / topLayer.getThickness();
+                return layer.add(topLayer.erode(k));
+            }
+        }
     }
 
     /**
